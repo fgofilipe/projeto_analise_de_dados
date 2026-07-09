@@ -1,0 +1,24 @@
+# Ambiente virtual
+venv/
+
+# Variáveis de ambiente
+.env
+
+# Configurações do VS Code (opcional)
+.vscode/
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Cache do Jupyter
+.ipynb_checkpoints/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Dados gerados pelo projeto
+data/raw/*
+data/silver/*
+data/gold/*
