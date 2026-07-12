@@ -9,7 +9,7 @@ CREATE TABLE raw_viagem (
     situacao VARCHAR(50),
     viagem_urgente VARCHAR(5),
     justificativa_urgencia TEXT,
-    cod_orgao_superior VARCHAR(20),
+    cod_orgao_superior VARCHAR(20), 
     nome_orgao_superior VARCHAR(255),
     cod_orgao_solicitante VARCHAR(20),
     nome_orgao_solicitante VARCHAR(255),

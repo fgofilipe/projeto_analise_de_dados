@@ -1,22 +1,11 @@
 from pathlib import Path
-
 import pandas as pd
-from sqlalchemy import create_engine
-
+from sqlalchemy import create_engine, text
 from config import DB_CONFIG, MAPEAMENTOS_RAW
 
 
-# ==========================================================
-# CAMINHOS
-# ==========================================================
-
 BASE_DIR = Path(__file__).resolve().parent
 PASTA_RAW = BASE_DIR / "data" / "raw"
-
-
-# ==========================================================
-# ARQUIVOS
-# ==========================================================
 
 ARQUIVOS = {
     "viagem": "2025_Viagem.csv",
@@ -25,7 +14,6 @@ ARQUIVOS = {
     "trecho": "2025_Trecho.csv",
 }
 
-
 TABELAS_RAW = {
     "viagem": "raw_viagem",
     "pagamento": "raw_pagamento",
@@ -33,36 +21,35 @@ TABELAS_RAW = {
     "trecho": "raw_trecho",
 }
 
-
-# ==========================================================
-# CONEXÃO
-# ==========================================================
-
 def criar_engine():
-
-    usuario = DB_CONFIG["user"]
-    senha = DB_CONFIG["password"]
-    host = DB_CONFIG["host"]
-    porta = DB_CONFIG["port"]
-    banco = DB_CONFIG["database"]
 
     url = (
         f"postgresql+psycopg2://"
-        f"{usuario}:{senha}@{host}:{porta}/{banco}"
+        f"{DB_CONFIG['user']}:{DB_CONFIG['password']}"
+        f"@{DB_CONFIG['host']}:{DB_CONFIG['port']}"
+        f"/{DB_CONFIG['database']}"
     )
-
     return create_engine(url)
 
+def limpar_tabelas_raw(engine):
+    tabelas = [
+        "raw_pagamento",
+        "raw_passagem",
+        "raw_trecho",
+        "raw_viagem",
+    ]
 
-# ==========================================================
-# LEITURA DOS CSVs
-# ==========================================================
+    with engine.begin() as conexao:
+        for tabela in tabelas:
+            conexao.execute(text(f"TRUNCATE TABLE {tabela};"))
+
+    print("Tabelas Raw limpas.")
 
 def carregar_csv(nome_arquivo):
 
     caminho = PASTA_RAW / nome_arquivo
 
-    print(f"\nLendo arquivo: {nome_arquivo}")
+    print(f"\nLendo {nome_arquivo}...")
 
     df = pd.read_csv(
         caminho,
@@ -71,38 +58,24 @@ def carregar_csv(nome_arquivo):
         dtype=str
     )
 
-    # Remove espaços no início/fim do nome das colunas
     df.columns = df.columns.str.strip()
-
-    print(f"Registros encontrados: {len(df):,}")
+    print(f"{len(df):,} registros encontrados.")
 
     return df
 
-
-# ==========================================================
-# RENOMEIA AS COLUNAS
-# ==========================================================
-
-def preparar_dataframe(nome_tabela, df):
-
-    print("Renomeando colunas...")
+def preparar_dataframe(nome_base, df):
 
     df.rename(
-        columns=MAPEAMENTOS_RAW[nome_tabela],
+        columns=MAPEAMENTOS_RAW[nome_base],
         inplace=True
     )
 
     return df
 
-
-# ==========================================================
-# INSERE NA RAW
-# ==========================================================
-
 def inserir_raw(engine, df, tabela):
 
-    print(f"Inserindo dados em {tabela}...")
-
+    print(f"Inserindo em {tabela}...")
+    
     df.to_sql(
         name=tabela,
         con=engine,
@@ -114,29 +87,24 @@ def inserir_raw(engine, df, tabela):
 
     print(f"✔ {len(df):,} registros inseridos.")
 
-
-# ==========================================================
-# EXECUÇÃO
-# ==========================================================
-
-def executar():
+def executar_extracao():
 
     engine = criar_engine()
 
-    for nome, arquivo in ARQUIVOS.items():
+    limpar_tabelas_raw(engine)
 
-        tabela = TABELAS_RAW[nome]
+    for nome_base, nome_arquivo in ARQUIVOS.items():
 
-        df = carregar_csv(arquivo)
+        df = carregar_csv(nome_arquivo)
+        df = preparar_dataframe(nome_base, df)
 
-        df = preparar_dataframe(nome, df)
+        inserir_raw(
+            engine,
+            df,
+            TABELAS_RAW[nome_base]
+        )
 
-        inserir_raw(engine, df, tabela)
-
-    print("\n=========================================")
-    print("EXTRAÇÃO FINALIZADA COM SUCESSO!")
-    print("=========================================")
-
+    print("\nExtração finalizada com sucesso!")
 
 if __name__ == "__main__":
-    executar()
+    executar_extracao()
