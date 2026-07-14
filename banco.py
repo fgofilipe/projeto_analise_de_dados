@@ -8,7 +8,9 @@ def conectar():
 
 
 def testar_conexao():
-    """Testa a conexão com o banco de dados."""
+    conexao = None
+    cursor = None
+
     try:
         conexao = conectar()
         cursor = conexao.cursor()
@@ -19,13 +21,13 @@ def testar_conexao():
         print("Conexão com o PostgreSQL realizada com sucesso!")
         print(f"Versão do banco: {versao[0]}")
 
-        cursor.close()
-        conexao.close()
-
     except Exception as erro:
         print("Erro ao conectar ao PostgreSQL:")
         print(erro)
 
+    finally:
+        if cursor:
+            cursor.close()
 
-if __name__ == "__main__":
-    testar_conexao()
+        if conexao:
+            conexao.close()

@@ -1,10 +1,8 @@
 import os
 from dotenv import load_dotenv
 
-# Carrega as variáveis do arquivo .env
 load_dotenv()
 
-# Configurações do banco de dados
 DB_CONFIG = {
     "host": os.getenv("DB_HOST"),
     "port": os.getenv("DB_PORT"),
@@ -13,9 +11,11 @@ DB_CONFIG = {
     "password": os.getenv("DB_PASSWORD"),
 }
 
-# ==========================================================
+DRIVE_FILE_ID = os.getenv("DRIVE_FILE_ID")
+
+# ==============================================
 # MAPEAMENTO DAS COLUNAS DOS CSVs -> TABELAS RAW
-# ==========================================================
+# ==============================================
 
 COLUNAS_VIAGEM = {
     "Identificador do processo de viagem": "id_viagem",
