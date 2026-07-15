@@ -1,17 +1,24 @@
+# Ambiente virtual
 venv/
 
+# Variáveis de ambiente
 .env
 
+# Configurações do VS Code
 .vscode/
 
+# Cache do Python
 __pycache__/
 *.pyc
 
+# Cache do Jupyter
 .ipynb_checkpoints/
 
+# Arquivos do sistema
 .DS_Store
 Thumbs.db
 
+# Dados locais
 data/raw/*
 !data/raw/.gitkeep
 
@@ -21,4 +28,5 @@ data/silver/*
 data/gold/*
 !data/gold/.gitkeep
 
+# Arquivos ZIP baixados
 data/*.zip
