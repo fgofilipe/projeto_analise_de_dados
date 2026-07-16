@@ -8,8 +8,6 @@ DROP TABLE IF EXISTS raw_passagem;
 DROP TABLE IF EXISTS raw_pagamento;
 DROP TABLE IF EXISTS raw_viagem;
 
-
--- ==========
 -- CAMADA RAW
 
 CREATE TABLE raw_viagem (
@@ -93,7 +91,6 @@ CREATE TABLE raw_trecho (
 );
 
 
--- =============
 -- CAMADA SILVER
 
 CREATE TABLE silver_viagem (

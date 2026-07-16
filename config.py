@@ -13,9 +13,7 @@ DB_CONFIG = {
 
 DRIVE_FILE_ID = os.getenv("DRIVE_FILE_ID")
 
-# ==============================================
-# MAPEAMENTO DAS COLUNAS DOS CSVs -> TABELAS RAW
-# ==============================================
+
 
 COLUNAS_VIAGEM = {
     "Identificador do processo de viagem": "id_viagem",
